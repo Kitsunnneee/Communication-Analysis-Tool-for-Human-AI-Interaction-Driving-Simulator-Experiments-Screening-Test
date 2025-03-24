@@ -1,7 +1,7 @@
 import os 
 import logging
 from pydub import AudioSegment
-from config import VIDEO_PATH,AUDIO_PATH
+from config import VIDEO_PATH,AUDIO_PATH,SEG_PATH
 
 logging.basicConfig(level=logging.INFO)
 
@@ -44,11 +44,45 @@ def video_to_audio(video_dir, output_dir):
             logging.error(f"File {full_path} does not exist.Skipping...")
             continue
         extract_audio(full_path, full_audio_path)
+
+def split_audio(input_audio_dir, output_dir,split = 5000):
+    '''Split the all audio in Audios directory into desired amounts of second and save them'''
+    if not os.path.exists(input_audio_dir):
+        logging.error("Directory does not exist")
+        return
+    
+    audio_files = [f for f in os.listdir(input_audio_dir) if f.endswith('.wav')]
+    if not audio_files:
+        logging.error("No audio files found")
+        return
+    logging.info(f"Found {len(audio_files)} audio files")
+    for audio_f in audio_files:
+        try:
+            full_path = os.path.join(input_audio_dir, audio_f)
+            audio = AudioSegment.from_file(full_path)
+            audio_len = len(audio)
+            logging.info(f"Splitting {audio_f} into {audio_len//split} segments")
+            base_name = os.path.splitext(audio_f)[0]
+            # print(base_name[0])
+            audio_out_dir = os.path.join(output_dir, base_name)
+            os.makedirs(audio_out_dir, exist_ok=True)
+            for i, start in enumerate(range(0, audio_len, split)):
+                end = min(start+split, audio_len)
+                audio_chunk = audio[start:end]
+                chunk_name = os.path.join(audio_out_dir, f"{base_name}_{i}.wav")
+                audio_chunk.export(chunk_name, format='wav')
+                logging.info(f"Saved {chunk_name}")
+                
+        except Exception as e:
+            logging.error(f"Failed to split {audio}")
         
         
     
 path = VIDEO_PATH
 output_dir = AUDIO_PATH
+print("STEP 1 : Reading the directory")
 videos = read_directory(path)
-
+print("STEP 2 : Converting Videos to Audio")
 video_to_audio(path, output_dir)
+print("STEP 3 : Splitting the audio")
+split_audio(output_dir, SEG_PATH)
