@@ -2,11 +2,9 @@ from faster_whisper import WhisperModel
 import logging
 import os
 import torch
-from config import model_name, dvce, SEG_PATH,CSV
-import torchaudio
-from torchaudio.transforms import Resample
-from pydub import AudioSegment
+from config import model_name,CSV,split_length
 import pandas as pd
+import re
 
 
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +21,17 @@ def is_speech(audio, sr = 16000, threshold = 0.1):
     speech_timestamps = get_speech_timestamps(wav, mod, sampling_rate=sr)
 
     return len(speech_timestamps) > 0
+
+def file_sorting(file_path):
+    '''Sorts the files based on the number in the file name'''
+    base_name = os.path.basename(file_path)
+    match = re.match(r"(.*)_(\d+)\.wav", base_name)
+    if match:
+        original_name = match.group(1)
+        segment_no = int(match.group(2))
+        return (original_name, segment_no)   
+    
+    return (base_name, float('inf')) 
 
 def transcribe(audio_dir, output_csv):
     '''Transcribes the audio and saves in a csv'''
@@ -41,18 +50,22 @@ def transcribe(audio_dir, output_csv):
         return
     
     logging.info(f"Found {len(audio_files)} audio files")
-
+    audio_files.sort(key=file_sorting)
+    
     for audio_f in audio_files:
         try:
             if not is_speech(audio_f):
                 logging.info(f"Skipping {audio_f} as it is not speech")
                 continue
+            _, seg_idx = file_sorting(audio_f)
+            absolute_start = seg_idx * (split_length/1000)
+            
             segments, _ = model.transcribe(audio_f)
             for seg in segments:
+                actual_start = absolute_start + seg.start
                 results.append({
                     "file" : audio_f,
                     "start" : seg.start,
-                    "end" : seg.end,
                     "transcription" : seg.text
                 })
                 
@@ -62,11 +75,7 @@ def transcribe(audio_dir, output_csv):
             logging.error(f"Failed to transcribe {audio_f} : {str(e)}")
             
 
-        df = pd.DataFrame(results)
-        df.to_csv(CSV, index = False)
-        logging.info(f"Transcription saved to {output_csv}")
-        print(results)
-
-transcribe(SEG_PATH, CSV)
-
+    df = pd.DataFrame(results)
+    df.to_csv(CSV, index = False)
+    logging.info(f"Transcription saved to {output_csv}")
 

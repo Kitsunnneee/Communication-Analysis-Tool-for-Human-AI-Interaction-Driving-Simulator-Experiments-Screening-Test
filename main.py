@@ -2,7 +2,7 @@ from utils import video_to_audio, split_audio
 from stt import transcribe
 from sentiment import get_sentiment
 
-from config import CSV, VIDEO_PATH, AUDIO_PATH, SEG_PATH, model_name
+from config import CSV, VIDEO_PATH, AUDIO_PATH, SEG_PATH
 import logging
 import pandas as pd
 
