@@ -3,3 +3,5 @@ faster-whisper
 pandas
 torch
 torchaudio
+pysentimiento
+transformers
