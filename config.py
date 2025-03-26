@@ -4,6 +4,6 @@ VIDEO_PATH = "Videos"
 AUDIO_PATH = "Audios"
 SEG_PATH = "Segments"
 CSV = "Transcription.csv"
-model_name = "tiny"
+model_name = "medium"
 
 dvce = torch.device("cuda" if torch.cuda.is_available() else "cpu")
