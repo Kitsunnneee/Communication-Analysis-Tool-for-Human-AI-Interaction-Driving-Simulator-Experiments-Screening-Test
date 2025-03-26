@@ -1,7 +1,7 @@
 import os 
 import logging
 from pydub import AudioSegment
-from config import VIDEO_PATH,AUDIO_PATH,SEG_PATH
+from config import split_length
 
 logging.basicConfig(level=logging.INFO)
 
@@ -45,7 +45,7 @@ def video_to_audio(video_dir, output_dir):
             continue
         extract_audio(full_path, full_audio_path)
 
-def split_audio(input_audio_dir, output_dir,split = 5000):
+def split_audio(input_audio_dir, output_dir,split = split_length):
     '''Split the all audio in Audios directory into desired amounts of second and save them'''
     if not os.path.exists(input_audio_dir):
         logging.error("Directory does not exist")
@@ -75,14 +75,3 @@ def split_audio(input_audio_dir, output_dir,split = 5000):
                 
         except Exception as e:
             logging.error(f"Failed to split {audio}")
-        
-        
-    
-path = VIDEO_PATH
-output_dir = AUDIO_PATH
-print("STEP 1 : Reading the directory")
-videos = read_directory(path)
-print("STEP 2 : Converting Videos to Audio")
-video_to_audio(path, output_dir)
-print("STEP 3 : Splitting the audio")
-split_audio(output_dir, SEG_PATH)

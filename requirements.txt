@@ -5,3 +5,4 @@ torch
 torchaudio
 pysentimiento
 transformers
+matplotlib
