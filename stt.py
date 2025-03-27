@@ -65,7 +65,7 @@ def transcribe(audio_dir, output_csv):
                 actual_start = absolute_start + seg.start
                 results.append({
                     "file" : audio_f,
-                    "start" : seg.start,
+                    "start" : actual_start,
                     "transcription" : seg.text
                 })
                 
