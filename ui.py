@@ -5,7 +5,6 @@ import threading
 import sys
 import subprocess
 
-# Import your existing modules
 from utils import video_to_audio, split_audio
 from stt import transcribe
 from sentiment import get_sentiment
