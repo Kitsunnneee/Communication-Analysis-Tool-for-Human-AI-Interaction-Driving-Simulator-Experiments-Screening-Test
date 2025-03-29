@@ -10,22 +10,29 @@ def generate_time_bucket_histogram(csv_path, bucket_size=5):
         print("Warning: 'start' column not found. Using index as proxy.")
         df['start'] = df.index * bucket_size
     
+    if 'transcription' not in df.columns:
+        print("Error: 'transcription' column not found in CSV.")
+        return None
+    
     max_time = df['start'].max()
     
     buckets = np.arange(0, max_time + bucket_size, bucket_size)
-    bucket_labels = [f"{int(start//60):02d}:{int(start%60):02d}-{int((start+bucket_size)//60):02d}:{int((start+bucket_size)%60):02d}" 
-                     for start in buckets[:-1]]
+    bucket_labels = [
+        f"{int(start//60):02d}:{int(start%60):02d}-{int((start+bucket_size)//60):02d}:{int((start+bucket_size)%60):02d}"
+        for start in buckets[:-1]
+    ]
     
     bucket_counts = []
     for i in range(len(buckets) - 1):
         bucket_mask = (df['start'] >= buckets[i]) & (df['start'] < buckets[i+1])
-        bucket_counts.append(len(df[bucket_mask]))
+        words_in_bucket = df[bucket_mask]['transcription'].str.split().str.len().sum()
+        bucket_counts.append(words_in_bucket)
     
     plt.figure(figsize=(12, 6))
     plt.bar(bucket_labels, bucket_counts)
-    plt.title('Transcription Lines per Time Bucket')
+    plt.title('Words per Time Bucket')
     plt.xlabel('Time Buckets')
-    plt.ylabel('Number of Transcription Lines')
+    plt.ylabel('Number of Words')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     

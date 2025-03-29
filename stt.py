@@ -61,12 +61,15 @@ def transcribe(audio_dir, output_csv):
             absolute_start = seg_idx * (split_length/1000)
             
             segments, _ = model.transcribe(audio_f)
-            for seg in segments:
-                actual_start = absolute_start + seg.start
-                results.append({
+            segments = list(segments)
+            # print(segments)
+            # print(segments["start"])
+            # print(segments[0].text)
+            actual_start = absolute_start + segments[0].start
+            results.append({
                     "file" : audio_f,
                     "start" : actual_start,
-                    "transcription" : seg.text
+                    "transcription" : segments[0].text
                 })
                 
             logging.info(f"Transcribed {audio_f}")
