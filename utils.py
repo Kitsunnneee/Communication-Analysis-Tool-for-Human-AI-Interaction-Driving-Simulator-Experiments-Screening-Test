@@ -6,7 +6,7 @@ from config import split_length
 logging.basicConfig(level=logging.INFO)
 
 def read_directory(dir_path):
-    '''Reads and return all the files in the directory'''
+    '''Function that reads and return all the files in the directory'''
     if not os.path.exists(dir_path):
         logging.error("Directory does not exist")
         return
@@ -18,8 +18,6 @@ def read_directory(dir_path):
 def extract_audio(video_path, output_audio_path):
     '''Extracts audio from the video file'''
     try:
-        # print(video_path)
-        # print(output_audio_path)
         video = AudioSegment.from_file(video_path)
         video.export(output_audio_path, format='wav')
         logging.info(f"Successfully extracted audio from {video_path} -> {output_audio_path}")
@@ -27,7 +25,7 @@ def extract_audio(video_path, output_audio_path):
         logging.error(f"Failed to extract audio from {video_path}")
 
 def video_to_audio(video_dir, output_dir):
-    '''Goes through the directory and extracts audio from each video file'''
+    '''Function that goes through the directory and extracts audio from each video file'''
     if not os.path.exists(output_dir):
         os.makedirs(output_dir,exist_ok=True)
         
@@ -46,7 +44,7 @@ def video_to_audio(video_dir, output_dir):
         extract_audio(full_path, full_audio_path)
 
 def split_audio(input_audio_dir, output_dir,split = split_length):
-    '''Split the all audio in Audios directory into desired amounts of second and save them'''
+    '''Function that split the all audio in Audios directory into desired amounts of second and save them'''
     if not os.path.exists(input_audio_dir):
         logging.error("Directory does not exist")
         return

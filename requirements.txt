@@ -6,3 +6,11 @@ torchaudio
 pysentimiento
 transformers
 matplotlib
+pillow 
+numpy
+tk
+pydub
+pytest
+pytest-mock
+requests
+tqdm

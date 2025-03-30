@@ -1,206 +1,156 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-import os
 import sys
-import subprocess
-import pandas as pd
 import logging
+import os
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
+from visualization import generate_time_bucket_histogram, generate_sentiment_visualization
 
-from visualization import save_plots
 
 class CommunicationAnalysisApp:
     def __init__(self, master):
         self.master = master
         master.title("Communication Analysis Tool")
-        master.geometry("800x600")
-        
+        master.geometry("1000x700")
+
         # Set theme colors
         self.primary_color = "#2c3e50"
         self.secondary_color = "#ecf0f1"
         self.accent_color = "#3498db"
         self.success_color = "#2ecc71"
-        
+
         # Configure the window
         master.configure(bg=self.secondary_color)
         master.option_add("*Font", "Helvetica 10")
-        
+
         # Create and configure styles
         self.configure_styles()
-        
+
         # Create main frames
         self.create_header_frame()
         self.create_content_frame()
         self.create_status_bar()
-        
+
         # Set up logging
         self.setup_logging()
 
-    def configure_styles(self):
-        """Configure ttk styles for a modern look"""
-        self.style = ttk.Style()
-        
-        # Configure common styles
-        self.style.configure('TFrame', background=self.secondary_color)
-        self.style.configure('TLabel', background=self.secondary_color, font=('Helvetica', 10))
-        self.style.configure('Header.TLabel', background=self.primary_color, foreground='white', font=('Helvetica', 14, 'bold'))
-        self.style.configure('Title.TLabel', font=('Helvetica', 12, 'bold'))
-        
-        # Configure specialized frames
-        self.style.configure('Primary.TFrame', background=self.primary_color)
-        
-        # Configure button styles
-        self.style.configure('TButton', font=('Helvetica', 10))
-        self.style.configure('Primary.TButton', background=self.accent_color)
-        
-        # Configure entry styles
-        self.style.configure('TEntry', fieldbackground='white')
-        
-        # Configure progressbar
-        self.style.configure('TProgressbar', troughcolor=self.secondary_color, background=self.accent_color)
-
-    def create_header_frame(self):
-        """Create the header section"""
-        header_frame = ttk.Frame(self.master, style='TFrame')
-        header_frame.pack(fill=tk.X)
-        
-        # Use a standard tk Frame for custom background color
-        title_container = tk.Frame(header_frame, bg=self.primary_color, height=60)
-        title_container.pack(fill=tk.X)
-        
-        # App title
-        title_label = tk.Label(title_container, text="Communication Analysis Tool", 
-                              bg=self.primary_color, fg="white", font=('Helvetica', 14, 'bold'))
-        title_label.pack(pady=15)
-
-    def create_content_frame(self):
-        """Create the main content area"""
-        main_frame = ttk.Frame(self.master, style='TFrame')
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
-        
-        # File selection section
-        file_section = ttk.LabelFrame(main_frame, text="File Selection", padding="10")
-        file_section.pack(fill=tk.X, pady=10)
-        
-        self.file_path = tk.StringVar()
-        
-        file_label = ttk.Label(file_section, text="Transcription File:", style='TLabel')
-        file_label.grid(row=0, column=0, sticky='w', pady=5)
-        
-        file_frame = ttk.Frame(file_section, style='TFrame')
-        file_frame.grid(row=1, column=0, sticky='ew', pady=5)
-        file_section.columnconfigure(0, weight=1)
-        
-        self.file_entry = ttk.Entry(file_frame, textvariable=self.file_path, state='readonly', width=60)
-        self.file_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
-        
-        upload_button = ttk.Button(file_frame, text="Browse...", command=self.upload_file, width=15)
-        upload_button.pack(side=tk.RIGHT)
-        
-        # Actions section
-        actions_section = ttk.LabelFrame(main_frame, text="Actions", padding="10")
-        actions_section.pack(fill=tk.X, pady=10)
-        
-        actions_frame = ttk.Frame(actions_section, style='TFrame')
-        actions_frame.pack(fill=tk.X, pady=5)
-        
-        # Use the native ttk.Button for consistent look across platforms
-        generate_button = ttk.Button(actions_frame, text="Generate Visualizations", 
-                                  command=self.generate_visualizations, width=25)
-        generate_button.pack(side=tk.LEFT, padx=5, pady=10)
-        
-        open_folder_button = ttk.Button(actions_frame, text="Open Plots Folder", 
-                                      command=self.open_plots_folder, width=20)
-        open_folder_button.pack(side=tk.LEFT, padx=5, pady=10)
-        
-        # Progress section
-        progress_section = ttk.LabelFrame(main_frame, text="Progress", padding="10")
-        progress_section.pack(fill=tk.X, pady=10)
-        
-        self.progress_var = tk.DoubleVar()
-        self.progress_bar = ttk.Progressbar(progress_section, orient=tk.HORIZONTAL, 
-                                         length=100, mode='determinate', 
-                                         variable=self.progress_var)
-        self.progress_bar.pack(fill=tk.X, pady=10)
-        
-        self.progress_label = ttk.Label(progress_section, text="Ready to start analysis", style='TLabel')
-        self.progress_label.pack(pady=5)
-
-    def create_status_bar(self):
-        """Create a status bar at the bottom"""
-        # Use standard tk Frame for status bar to allow direct background setting
-        status_frame = tk.Frame(self.master, relief=tk.SUNKEN, bg=self.primary_color)
-        status_frame.pack(side=tk.BOTTOM, fill=tk.X)
-        
-        self.status_label = tk.Label(status_frame, text="Ready", fg="white", bg=self.primary_color)
-        self.status_label.pack(side=tk.LEFT, padx=10, pady=3)
-
     def setup_logging(self):
-        """Set up logging configuration"""
-        logging.basicConfig(level=logging.INFO, 
+        logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s - %(levelname)s: %(message)s',
                             handlers=[
                                 logging.StreamHandler(sys.stdout),
                                 logging.FileHandler('analysis_log.txt')
                             ])
 
+    def configure_styles(self):
+        self.style = ttk.Style()
+        self.style.configure('TFrame', background=self.secondary_color)
+        self.style.configure('TLabel', background=self.secondary_color)
+
+    def create_header_frame(self):
+        header_frame = ttk.Frame(self.master)
+        header_frame.pack(fill=tk.X)
+        title_label = ttk.Label(header_frame, text="Communication Analysis Tool", font=('Helvetica', 16, 'bold'))
+        title_label.pack(pady=10)
+
+    def create_content_frame(self):
+        content_frame = ttk.Frame(self.master)
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        file_frame = ttk.Frame(content_frame)
+        file_frame.pack(fill=tk.X)
+        self.file_path = tk.StringVar()
+        file_label = ttk.Label(file_frame, text="Transcription File:")
+        file_label.pack(side=tk.LEFT)
+        self.file_entry = ttk.Entry(file_frame, textvariable=self.file_path, width=60)
+        self.file_entry.pack(side=tk.LEFT, padx=5)
+        browse_button = ttk.Button(file_frame, text="Browse", command=self.upload_file)
+        browse_button.pack(side=tk.LEFT)
+
+        self.plot_frame = ttk.Frame(content_frame)
+        self.plot_frame.pack(fill=tk.BOTH, expand=True)
+
+        generate_button = ttk.Button(content_frame, text="Generate Visualizations", command=self.generate_visualizations)
+        generate_button.pack(pady=10)
+
     def upload_file(self):
-        """Handle file selection"""
         filetypes = [('CSV Files', '*.csv'), ('All Files', '*.*')]
         selected_file = filedialog.askopenfilename(title="Select Transcription File", filetypes=filetypes)
         if selected_file:
             self.file_path.set(selected_file)
-            self.update_status(f"File selected: {os.path.basename(selected_file)}")
 
     def generate_visualizations(self):
-        """Generate visualizations from the selected file"""
-        if not self.file_path.get():
-            messagebox.showerror("Error", "Please upload a transcription file first.")
+        file_path = self.file_path.get()
+        if not file_path:
+            messagebox.showerror("Error", "Please select a file.")
             return
-            
+
         try:
-            # Reset progress
-            self.progress_var.set(0)
-            self.progress_label.config(text="Generating visualizations...")
-            self.update_status("Processing...")
-            self.master.update_idletasks()
-            
-            # Simulate progress (in a real app, you'd update this based on actual progress)
-            for i in range(1, 101):
-                self.master.after(20)  # Small delay for visual feedback
-                self.progress_var.set(i)
-                self.master.update_idletasks()
-                
-            # Generate the actual visualizations
-            save_plots(self.file_path.get())
-            
-            self.progress_label.config(text="Visualizations completed successfully!")
-            self.update_status("Completed")
-            messagebox.showinfo("Success", "Visualizations generated in 'plots' directory!")
-            
+            for widget in self.plot_frame.winfo_children():
+                widget.destroy()
+
+            output_dir = './plots'
+            os.makedirs(output_dir, exist_ok=True)
+
+            fig1 = generate_time_bucket_histogram(file_path)
+            histogram_path = os.path.join(output_dir, 'transcription_histogram.png')
+            fig1.savefig(histogram_path)
+            fig1.clf()
+
+            fig2 = generate_sentiment_visualization(file_path)
+            sentiment_path = os.path.join(output_dir, 'sentiment_distribution.png')
+            fig2.savefig(sentiment_path)
+            fig2.clf()
+
+            self.display_image(histogram_path)
+            self.display_image(sentiment_path)
+
+            messagebox.showinfo("Success", "Visualizations generated and displayed successfully!")
+
         except Exception as e:
             logging.error(f"Visualization generation failed: {e}")
-            self.progress_label.config(text=f"Error: {str(e)}")
-            self.update_status("Error")
             messagebox.showerror("Error", f"Failed to generate visualizations: {e}")
 
-    def open_plots_folder(self):
-        """Open the plots folder in the file explorer"""
-        plots_path = os.path.abspath('./plots')
-        if os.path.exists(plots_path):
-            if sys.platform.startswith('darwin'):
-                subprocess.run(['open', plots_path])
-            elif sys.platform.startswith('win'):
-                os.startfile(plots_path)
-            else:
-                subprocess.run(['xdg-open', plots_path])
-            self.update_status(f"Opened plots folder: {plots_path}")
-        else:
-            self.update_status("Plots folder not found")
-            messagebox.showwarning("Warning", "Plots folder does not exist. Generate visualizations first.")
+    def display_image(self, image_path):
+        try:
+            img = Image.open(image_path)
+            img = img.resize((500, 300), Image.LANCZOS)
+            img_tk = ImageTk.PhotoImage(img)
+            label = ttk.Label(self.plot_frame, image=img_tk)
+            label.image = img_tk
+            label.bind("<Button-1>", lambda e: self.open_zoomable_image(image_path))
+            label.pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=10)
+        except Exception as e:
+            logging.error(f"Failed to display image {image_path}: {e}")
+            messagebox.showerror("Error", f"Failed to display image: {e}")
 
-    def update_status(self, message):
-        """Update the status bar message"""
-        self.status_label.config(text=message)
+    def open_zoomable_image(self, image_path):
+        zoom_window = tk.Toplevel(self.master)
+        zoom_window.title("Zoomable Image")
+
+        canvas = tk.Canvas(zoom_window, bg="white")
+        scroll_x = tk.Scrollbar(zoom_window, orient="horizontal", command=canvas.xview)
+        scroll_y = tk.Scrollbar(zoom_window, orient="vertical", command=canvas.yview)
+        canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+
+        img = Image.open(image_path)
+        img_tk = ImageTk.PhotoImage(img)
+
+        canvas.create_image(0, 0, anchor="center", image=img_tk)
+        canvas.image = img_tk  # Keep a reference to avoid garbage collection
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        canvas.pack(fill="both", expand=True)
+        scroll_x.pack(fill="x", side="bottom")
+        scroll_y.pack(fill="y", side="right")
+
+
+    def create_status_bar(self):
+        status_frame = ttk.Frame(self.master)
+        status_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        self.status_label = ttk.Label(status_frame, text="Ready")
+        self.status_label.pack(side=tk.LEFT)
 
 
 def main():

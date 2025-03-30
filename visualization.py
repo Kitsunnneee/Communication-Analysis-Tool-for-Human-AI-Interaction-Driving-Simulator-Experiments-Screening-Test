@@ -2,43 +2,55 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from config import TRANSCRIBE_DIR 
+
+files = os.listdir(TRANSCRIBE_DIR) # Take the first file for testing
 
 def generate_time_bucket_histogram(csv_path, bucket_size=5):
+    '''Function to generate the histogram for 5 second buckets'''
     df = pd.read_csv(csv_path)
-    
+
     if 'start' not in df.columns:
-        print("Warning: 'start' column not found. Using index as proxy.")
-        df['start'] = df.index * bucket_size
-    
+        print("Error : 'start' column not found.")
+        return None
+
     if 'transcription' not in df.columns:
         print("Error: 'transcription' column not found in CSV.")
         return None
-    
+
     max_time = df['start'].max()
-    
+
+    # Generate bucket edges and labels
     buckets = np.arange(0, max_time + bucket_size, bucket_size)
     bucket_labels = [
-        f"{int(start//60):02d}:{int(start%60):02d}-{int((start+bucket_size)//60):02d}:{int((start+bucket_size)%60):02d}"
+        f"{int(start // 60):02d}:{int(start % 60):02d}-{int((start + bucket_size) // 60):02d}:{int((start + bucket_size) % 60):02d}"
         for start in buckets[:-1]
     ]
-    
-    bucket_counts = []
-    for i in range(len(buckets) - 1):
-        bucket_mask = (df['start'] >= buckets[i]) & (df['start'] < buckets[i+1])
-        words_in_bucket = df[bucket_mask]['transcription'].str.split().str.len().sum()
-        bucket_counts.append(words_in_bucket)
-    
+
+    # Aggregate words into buckets
+    bucket_counts = [0] * (len(buckets) - 1)
+    for _, row in df.iterrows():
+        start_time = row['start']
+        word_count = len(str(row['transcription']).split())
+
+        # Find the appropriate bucket for the current segment
+        bucket_index = min(int(start_time // bucket_size), len(bucket_counts) - 1)
+        bucket_counts[bucket_index] += word_count
+
+    # Plotting the histogram
     plt.figure(figsize=(12, 6))
-    plt.bar(bucket_labels, bucket_counts)
+    plt.bar(bucket_labels, bucket_counts, color='skyblue')
     plt.title('Words per Time Bucket')
     plt.xlabel('Time Buckets')
     plt.ylabel('Number of Words')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    
+
     return plt
 
+
 def generate_sentiment_visualization(csv_path):
+    '''Function to generate a pie chart of sentiment distribution'''
 
     df = pd.read_csv(csv_path)
     
@@ -51,10 +63,11 @@ def generate_sentiment_visualization(csv_path):
     plt.figure(figsize=(10, 7))
     plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%')
     plt.title('Sentiment Distribution')
-    
+      
     return plt
 
 def save_plots(csv_path, output_dir='./plots'):
+    '''Function to save plots in a folder'''
 
     os.makedirs(output_dir, exist_ok=True)
     
@@ -73,6 +86,5 @@ def save_plots(csv_path, output_dir='./plots'):
     except Exception as e:
         print(f"Error generating sentiment plot: {e}")
 
-if __name__ == "__main__":
-    from config import CSV  # Assuming your config file has the CSV path
-    save_plots(CSV)
+if __name__ == "__main__": 
+    save_plots(os.path.join(TRANSCRIBE_DIR,files[0]))

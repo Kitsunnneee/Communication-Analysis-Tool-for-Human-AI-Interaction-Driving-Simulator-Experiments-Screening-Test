@@ -1,26 +1,17 @@
 from utils import video_to_audio, split_audio
 from stt import transcribe
-from sentiment import get_sentiment
-
-from config import CSV, VIDEO_PATH, AUDIO_PATH, SEG_PATH
 import logging
-import pandas as pd
+from config import VIDEO_PATH, AUDIO_PATH, SEG_PATH, TRANSCRIBE_DIR
 
 logging.basicConfig(level=logging.INFO)
 
-print("STEP 1 : Extracting audio from video")
+logging.info("STEP 1: Extracting audio from video")
 video_to_audio(VIDEO_PATH, AUDIO_PATH)
 
-print("STEP 2 : Splitting audio into segments")
+logging.info("STEP 2: Splitting audio into segments")
 split_audio(AUDIO_PATH, SEG_PATH)
 
-print("STEP 3 : Transcribing audio")
-transcribe(SEG_PATH, CSV)
+logging.info("STEP 3: Transcribing audio and performing sentiment analysis")
+transcribe(SEG_PATH, TRANSCRIBE_DIR)
 
-print("STEP 4 : Performing sentiment analysis")
-data = pd.read_csv(CSV)
-get_sentiment(data)
-data.to_csv(CSV, index=False)
-
-print("STEP 5 : Sentiment analysis completed and saved to CSV.")
-print("Pipeline completed successfully")
+logging.info("Pipeline completed successfully.")
