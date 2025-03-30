@@ -51,21 +51,19 @@ def transcribe(audio_dir, output_csv):
     
     logging.info(f"Found {len(audio_files)} audio files")
     audio_files.sort(key=file_sorting)
-    
+    skipped_duration = 0 
     for audio_f in audio_files:
         try:
             if not is_speech(audio_f):
                 logging.info(f"Skipping {audio_f} as it is not speech")
+                skipped_duration += split_length / 1000
                 continue
             _, seg_idx = file_sorting(audio_f)
-            absolute_start = seg_idx * (split_length/1000)
+            absolute_start = seg_idx * (split_length/1000) - skipped_duration
             
             segments, _ = model.transcribe(audio_f)
             segments = list(segments)
-            # print(segments)
-            # print(segments["start"])
-            # print(segments[0].text)
-            actual_start = absolute_start + segments[0].start
+            actual_start = absolute_start + skipped_duration + segments[0].start
             results.append({
                     "file" : audio_f,
                     "start" : actual_start,
