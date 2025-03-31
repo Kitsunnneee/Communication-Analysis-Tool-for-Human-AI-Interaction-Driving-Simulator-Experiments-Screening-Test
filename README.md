@@ -10,13 +10,19 @@ This is the test for HumanAI for the Project titled : Communication Analysis Too
 
 To deploy this project : 
 
+1. Create Virtual Enviroment and activate it :
+```bash
+  python -m venv humanai
+  source humanai/bin/activate
+```
 
-1. Install everything in the requirements file : 
+
+2. Install everything in the requirements file : 
 
 ```bash
   pip install -r requirements.txt
 ```
-2. Install tkinter for UI.
+3. Install tkinter for UI.
     
 For Linux based systems : 
 
@@ -37,7 +43,7 @@ For Windows :
 
 It's bundled with python in Windows.
 
-3. Install sox for audio processing tasks.
+4. Install sox for audio processing tasks.
 For Linux based systems :
  ```bash
     sudo apt-get update
@@ -119,6 +125,6 @@ This will open up the UI. You have to upload your CSV file and it will generate 
 
 - Next I moved onto STT and Sentiment analysis task. Here I have used [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper) library for transcription as it uses CTranslate2 which makes the inferencing much more faster. For sentiment I have used a library called [**pysentimiento**](https://arxiv.org/pdf/2106.09462) as it already contains Fine-trained model(by default uses BERTweet) for sentiment analysis which it downloads from HuggingFace and uses. Below are attached metric from their paper for the benchmarks(done on mean MARCO F1 score for 10 runs) :
 
-![Benchmarks](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Benchmarks](assets/Screenshot 2025-03-31 at 1.08.20 AM.png)
 
 - 
