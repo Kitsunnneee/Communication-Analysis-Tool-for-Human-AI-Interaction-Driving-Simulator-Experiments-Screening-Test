@@ -64,12 +64,12 @@ def transcribe(audio_dir, output_dir):
                 continue
             
             _, seg_idx = file_sorting(audio_f)
-            absolute_start = seg_idx * (split_length / 1000) - skipped_duration
+            absolute_start = seg_idx * (split_length / 1000) 
             
             segments, _ = model.transcribe(audio_f)
             segments = list(segments)
             
-            actual_start = absolute_start + skipped_duration + segments[0].start + 1
+            actual_start = absolute_start + segments[0].start + 1
             
             results.append({
                     "file": os.path.basename(audio_f),
