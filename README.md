@@ -153,5 +153,5 @@ Below are attached metric from their paper for the benchmarks(done on mean MARCO
 
 ## Demo Video
 
-![AppVideoDemo](assets/Screen Recording 2025-04-01 at 7.24.51 PM.mov)
+![AppVideoDemo]()
 
