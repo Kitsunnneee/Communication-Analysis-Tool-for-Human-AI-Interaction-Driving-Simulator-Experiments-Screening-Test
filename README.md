@@ -143,7 +143,7 @@ This will open up the UI. You have to upload your CSV file and it will generate 
 
 Below are attached metric from their paper for the benchmarks(done on mean MARCO F1 score for 10 runs) :
 
-![Benchmarks](assets/Screenshot 2025-03-31 at 1.08.20 AM.png)
+![Benchmarks](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
 - After this, we move on to the second portion of the test that is to vizualize and create an application to load any transcription and generate graphs. For the this portion the logic is simple first I calculate the total duration of the Video. For each row of transcription.csv file I take the start time and the transcription and I figure out which bucket the row falls to by start time // bucket size(5 second in this case). This gives us which bucket the current row falls into. we pass the above to a min() function with the other parameter being len(bucket count) - 1. This help us in case the start time // bucket size is more than the bucket count. Thus, the row will fall in the last bucket always. After this I count the words for each row and create a bar graph/histogram using matplotlib.
 
@@ -153,5 +153,22 @@ Below are attached metric from their paper for the benchmarks(done on mean MARCO
 
 ## Demo Video
 
-![AppVideoDemo]()
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Tests
+
+For the Testing portion I have opted to use the *unittest* library.
+Why? 
+It test for every single component of the code ensuring the final application is error free. Even if any change is made to any portion of the code we can always run the unit test to see if the changes made are meeting our required output. By using this we also get an idea what the out from each modular section should be. In case of errors, this makes it much more easier to narrow down the location of the error.
+
+How each component is Tested?
+
+- 
+
+To run tests, run the following command
+
+```bash
+  npm run test
+```
 

@@ -18,7 +18,15 @@ def generate_time_bucket_histogram(csv_path, bucket_size=5):
         print("Error: 'transcription' column not found in CSV.")
         return None
 
+    df = df[pd.to_numeric(df['start'], errors='coerce').notnull()]
+    df['start'] = df['start'].astype(float)
+    df = df[np.isfinite(df['start'])]
+
     max_time = df['start'].max()
+    print(f"Max Time : {max_time}")
+    if max_time > 10000:
+        print(f"Warning: Skipping histogram generation. max_time={max_time} is too large.")
+        return None
 
     # Generate bucket edges and labels
     buckets = np.arange(0, max_time + bucket_size, bucket_size)
@@ -33,11 +41,10 @@ def generate_time_bucket_histogram(csv_path, bucket_size=5):
         start_time = row['start']
         word_count = len(str(row['transcription']).split())
 
-        # Find the appropriate bucket for the current segment
         bucket_index = min(int(start_time // bucket_size), len(bucket_counts) - 1)
         bucket_counts[bucket_index] += word_count
 
-    # Plotting the histogram
+    # Plotting
     plt.figure(figsize=(12, 6))
     plt.bar(bucket_labels, bucket_counts, color='skyblue')
     plt.title('Words per Time Bucket')
