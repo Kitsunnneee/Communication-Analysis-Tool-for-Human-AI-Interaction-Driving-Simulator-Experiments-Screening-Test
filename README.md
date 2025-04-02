@@ -143,7 +143,7 @@ This will open up the UI. You have to upload your CSV file and it will generate 
 
 Below are attached metric from their paper for the benchmarks(done on mean MARCO F1 score for 10 runs) :
 
-![Benchmarks](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Benchmarks](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/Screenshot%202025-03-31%20at%201.08.20%E2%80%AFAM.png)
 
 - After this, we move on to the second portion of the test that is to vizualize and create an application to load any transcription and generate graphs. For the this portion the logic is simple first I calculate the total duration of the Video. For each row of transcription.csv file I take the start time and the transcription and I figure out which bucket the row falls to by start time // bucket size(5 second in this case). This gives us which bucket the current row falls into. we pass the above to a min() function with the other parameter being len(bucket count) - 1. This help us in case the start time // bucket size is more than the bucket count. Thus, the row will fall in the last bucket always. After this I count the words for each row and create a bar graph/histogram using matplotlib.
 
@@ -151,10 +151,17 @@ Below are attached metric from their paper for the benchmarks(done on mean MARCO
 
 
 
-## Demo Video
+## Demo Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+![Start](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/start.png)
+![Running](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/running.png)
+![CSV](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/csv.png)
+![Vizualisation](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/viz.png)
+![Sentiment](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/sentiment_distribution.png)
+![Histogram](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/transcription_histogram.png)
+![UI](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/ui.png)
+![UI Upload](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/ui_upload.png)
+![Plot Ui](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/plot_ui.png)
 
 ## Tests
 
