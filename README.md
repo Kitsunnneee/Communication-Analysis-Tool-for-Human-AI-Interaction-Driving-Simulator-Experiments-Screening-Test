@@ -109,9 +109,9 @@ This will open up the UI. You have to upload your CSV file and it will generate 
 │   └── Experimenter_CREW_999_1_All_1731617801
 │       ├── Experimenter_CREW_999_1_All_1731617801_0.wav
 │       ├── Experimenter_CREW_999_1_All_1731617801_1.wav
-|       .
-|       .
-|       .
+│       .
+│       .
+│       .
 ├── Transcriptions
 │   └── Experimenter_CREW_999_1_All_1731617801_71.csv
 ├── Videos
