@@ -163,12 +163,18 @@ Why?
 It test for every single component of the code ensuring the final application is error free. Even if any change is made to any portion of the code we can always run the unit test to see if the changes made are meeting our required output. By using this we also get an idea what the out from each modular section should be. In case of errors, this makes it much more easier to narrow down the location of the error.
 
 How each component is Tested?
+- For Utilities, first we create directories for all the test(video, audio and splitting). A video is downloaded from the internet. After this we check each function to see if they read the directories and find video, can extract audio out of the video and split the audio into segments. FOr read directory function we check if the videos are grater than 0 or not. For audio extraction we check if the audio is greater than 0 or not. For the segmentation we check if the amount of segment is greater than 0 or not.
+- For Speech-to-Text, the audio segments are being used to transcribe and create the csv. We also check if there is sppech using the VAD. For VAD we check if the output is a boolean or not and for STT we check if the output csv has transcription or not.
+- For sentiment analysis use the csv created by STT use predict between 3 labels (NEG - negative, POS - positive, NEU - neutral). And check if sentiment column is there in the csv or not. 
+- For Visualization, we provide the csv and create the plot and check if the file return is a plot or not.
+- For the UI we check all the component. For the plotting widget we check if it is not None, same for file entry. This ensures they are created. For upload of file , we hard code the file path and then check if it exist or not. 
 
-- 
+- Finally after everything is done we delete the audio, segment and transcription as defined in the tear down function.
 
-To run tests, run the following command
+To run tests, run the following command from the root directory: 
 
 ```bash
-  npm run test
+  python -m unittest discover -s test -p "test_*.py" -v 
 ```
+
 
