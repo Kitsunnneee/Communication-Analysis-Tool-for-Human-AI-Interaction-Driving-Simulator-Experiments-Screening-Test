@@ -184,4 +184,11 @@ To run tests, run the following command from the root directory:
   python -m unittest discover -s test -p "test_*.py" -v 
 ```
 
+## Further Improvement
+
+- Looking into better Sentiment Analysis more or Fine tunning our own.
+- Improving the UI for more friendlier User Experience.
+- Looking into faster STT like [Whipher CPP](https://github.com/ggerganov/whisper.cpp) or [Whisper Plus](https://github.com/kadirnar/whisper-plus)
+
+
 
