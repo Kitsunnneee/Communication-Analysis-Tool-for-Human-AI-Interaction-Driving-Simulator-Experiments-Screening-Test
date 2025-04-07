@@ -5,8 +5,10 @@ This is the test for HumanAI for the Project titled : Communication Analysis Too
 
 
 ## Requirements for Running
+**IMPORTANt : When you clone the repository create a Foldr named 'Videos'. In this folder add all the videos you want to get transcribed and create csv and everything.**
 
 **NOTE** : All the tasks were run on **MacOS** and **python version 3.10 .16**.  So, you may face issues for Windows or Ubuntu or wrong python versions.
+
 
 To deploy this project : 
 
@@ -16,13 +18,23 @@ To deploy this project :
   source humanai/bin/activate
 ```
 
+2. Install ffmpeg
+  ```bash
+  brew install ffmpeg #For MacOS
+  #For Linux 
+  sudo apt update
+  sudo apt install ffmpeg
+  ```
+  For Windows go to this page  : https://ffmpeg.org/download.html
+  And follow the instructions.
 
-2. Install everything in the requirements file : 
+
+3. Install everything in the requirements file : 
 
 ```bash
   pip install -r requirements.txt
 ```
-3. Install tkinter for UI.
+4. Install tkinter for UI.
     
 For Linux based systems : 
 
@@ -43,7 +55,7 @@ For Windows :
 
 It's bundled with python in Windows.
 
-4. Install sox for audio processing tasks.
+5. Install sox for audio processing tasks.
 For Linux based systems :
  ```bash
     sudo apt-get update
@@ -137,11 +149,14 @@ This will open up the UI. You have to upload your CSV file and it will generate 
 ```
 
 - I started with writing the **utils.py** function  which handled the basic functionalities of Extracting audio from each Video in the directory, creating segments for each audio and saving the same. For all of these tasks I have used PyDub. I have also added a **config.py** to make the task of naming the directories and models and split length easier in one place only.
+- I used the [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper) library for transcription, which leverages CTranslate2 for significantly faster inference times compared to the original Whisper implementation.
+- For sentiment analysis, I employed the [**pysentimiento**](https://arxiv.org/pdf/2106.09462) library. It comes with a fine-tuned sentiment classification model (default: BERTweet) that it downloads from HuggingFace for analysis.
+- To match transcription segments with actual audio/video timestamps, I used Voice Activity Detection (VAD) to count silent parts. For each skipped silent segment, I increment a counter. The actual timestamp of a segment is calculated as:
+absolute_start = segment_index * split_length + segment_start (0) + 1
 
-- Next I moved onto STT and Sentiment analysis task. Here I have used [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper) library for transcription as it uses CTranslate2 which makes the inferencing much more faster. For sentiment I have used a library called [**pysentimiento**](https://arxiv.org/pdf/2106.09462) as it already contains Fine-trained model(by default uses BERTweet) for sentiment analysis which it downloads from HuggingFace and uses. When calculating the start of transcription of segments to match with the actual audio/video timestamp I have used this logic: I am keeping a count of any time a audio is silent using VAD(Voice Activity Detection). Whenever a segment is getting skipped due to VAD I keep a count of it. Now, When calculating the actual timestamp of the start of the segment in comparison with the actual Video/Audio I calculate the absolute start as absolute start -> segment index(taken from the filename) * the split length + 0(segment start) + 1 . 
 **For running all the model I have defaulted to 'cpu' due to personal GPU restriction**
 
-Below are attached metric from their paper for the benchmarks(done on mean MARCO F1 score for 10 runs) :
+Below are attached metric from their paper for the **benchmarks**(done on mean MARCO F1 score for 10 runs) for the models in pysentimiento :
 
 ![Benchmarks](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/Screenshot%202025-03-31%20at%201.08.20%E2%80%AFAM.png)
 
@@ -187,6 +202,7 @@ To run tests, run the following command from the root directory:
 ## Further Improvement
 
 - Looking into better Sentiment Analysis more or Fine tunning our own.
+- Looking into speaker diarization to identify multiple speaker.
 - Improving the UI for more friendlier User Experience.
 - Looking into faster STT like [Whipher CPP](https://github.com/ggerganov/whisper.cpp) or [Whisper Plus](https://github.com/kadirnar/whisper-plus)
 
