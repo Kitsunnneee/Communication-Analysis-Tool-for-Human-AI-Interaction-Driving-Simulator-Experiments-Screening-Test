@@ -112,7 +112,7 @@ Follow the instuctions and add sox to your **system's path**.
 This will open up the UI. You have to upload your CSV file and it will generate and display the plots and save them in a plot folder.
 ## Information on the Code and Test
 - Architecture Drawing : 
-![Architecture](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/Screenshot%202025-03-31%20at%201.08.20%E2%80%AFAM.png)
+![Architecture](https://github.com/Kitsunnneee/Communication-Analysis-Tool-for-Human-AI-Interaction-Driving-Simulator-Experiments-Screening-Test/blob/main/assets/arch.png)
 
 - File structure should be like this : 
 ```bash
