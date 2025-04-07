@@ -4,7 +4,7 @@ import numpy as np
 import os
 from config import TRANSCRIBE_DIR 
 
-files = os.listdir(TRANSCRIBE_DIR) # Take the first file for testing
+files = os.listdir(TRANSCRIBE_DIR) # Take the first file for testing. In actual use case specify the file you want to transcribe
 
 def generate_time_bucket_histogram(csv_path, bucket_size=5):
     '''Function to generate the histogram for 5 second buckets'''
