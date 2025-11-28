@@ -1,9 +1,4 @@
 
-# Communication Analysis Tool for Human-AI Interaction Driving Simulator Experiments – Screening Test
-
-This is the test for HumanAI for the Project titled : Communication Analysis Tool for Human-AI Interaction Driving Simulator Experiments. It contains all the neccessary codes, information on how to run it, the requirements, screenshots and video demonstration and how everything was tested.
-**Important : THE RESULTS FOR TRANSCRIPTION IS IN TRANSCRIPTIONS FOLDER AND FOR THE PLOTS I HAVE ATTACHED SCREENSHOTS BELOW IN DEMO SECTION(CAN BE ACCESSED SEPERATELY FROM ASSET FOLDER).**
-
 
 ## Requirements for Running
 **IMPORTANt : When you clone the repository create a Foldr named 'Videos'. In this folder add all the videos you want to get transcribed and create csv and everything.**
